@@ -1,5 +1,8 @@
 #include "gtest/gtest.h"
 
+#include "HashParserTests.hpp"
+#include "FastQParserTests.hpp"
+
 //#include "config/DataPaths.h"
 //#include "AlignmentParserTests.hpp"
 //#include "SparseKmerSetTests.hpp"
