@@ -7,6 +7,7 @@
 
 #include <unordered_set>
 
+#include <sstream>
 #include <fstream>
 #include <sys/mman.h>
 #include <sys/stat.h>
@@ -27,6 +28,21 @@ namespace rufus
 		{
 			std::unordered_set< InternalKmer > kmerSet;
 			readHashFile(hashFilePath.c_str(), kmerSet);
+			return kmerSet;
+		}
+
+		static inline std::unordered_set< InternalKmer > ParseString(const std::string& hashString)
+		{
+			std::unordered_set< InternalKmer > kmerSet;
+
+			std::istringstream hashStream(hashString);
+			std::string line;
+			while (std::getline(hashStream, line))
+			{
+				InternalKmer iKmer = HashParser::ParseHashLine(line.c_str());
+				kmerSet.emplace(iKmer);
+			}
+
 			return kmerSet;
 		}
 

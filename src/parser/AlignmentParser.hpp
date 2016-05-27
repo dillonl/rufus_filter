@@ -60,7 +60,7 @@ namespace rufus
 			return validKmer;
 		}
 
-		static inline bool ParseAlignment(const char* alignment, const char* quality, uint32_t qualityThreshold, size_t kmerIterations, std::vector< InternalKmer >& kmers)
+		static inline bool ParseAlignment(const char* alignment, size_t kmerIterations, std::vector< InternalKmer >& kmers)
 		{
 			bool validKmer = true;
 			for (auto i = 0; i < kmerIterations; ++i)

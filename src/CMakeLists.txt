@@ -1,6 +1,6 @@
-#set(CMAKE_BUILD_TYPE Debug) # uncomment this when you need a debug build
-SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3")
-SET(CMAKE_C_FLAGS "${CMAKE_CXX_FLAGS} -O3")
+set(CMAKE_BUILD_TYPE Debug) # uncomment this when you need a debug build
+#SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3")
+#SET(CMAKE_C_FLAGS "${CMAKE_CXX_FLAGS} -O3")
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 if (NOT "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang") # clang Doesnt use pthread

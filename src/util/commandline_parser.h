@@ -14,16 +14,17 @@ namespace rufus
 		~CommandlineParser();
 
 		std::string getHashPath();
+		std::string getFastQPath();
 		uint32_t getWindowSize();
 		uint32_t getWindowThreshold();
 		uint32_t getQualityThreshold();
-		/* std::iostream getOutStream(); */
 		bool parseOptions(int argc, char** argv);
 	private:
 
 		cxxopts::Options m_options;
 
 		std::string m_hash_path;
+		std::string m_fastq_path;
 		uint32_t m_window_size;
 		uint32_t m_window_threshold;
 		uint32_t m_quality_threshold;
