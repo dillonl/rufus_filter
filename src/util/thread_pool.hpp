@@ -24,7 +24,6 @@ namespace rufus
 			m_thread_count(threadCount),
 			m_stopped(false)
 		{
-			std::cout << "tc: " << threadCount << std::endl;
 			// init();
 			start();
 		}
