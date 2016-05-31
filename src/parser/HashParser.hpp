@@ -6,6 +6,7 @@
 #include "AlignmentParser.hpp"
 
 #include <unordered_set>
+#include <algorithm>
 
 #include <sstream>
 #include <fstream>
@@ -37,9 +38,15 @@ namespace rufus
 
 			std::istringstream hashStream(hashString);
 			std::string line;
+
+			std::getline(hashStream, line);
+			size_t tabLineCount = std::count(line.begin(), line.end(), '\t');
+			InternalKmer iKmer = HashParser::ParseHashLine(line.c_str(), tabLineCount);
+			kmerSet.emplace(iKmer);
+
 			while (std::getline(hashStream, line))
 			{
-				InternalKmer iKmer = HashParser::ParseHashLine(line.c_str());
+				InternalKmer iKmer = HashParser::ParseHashLine(line.c_str(), tabLineCount);
 				kmerSet.emplace(iKmer);
 			}
 
@@ -68,7 +75,7 @@ namespace rufus
 			return iKmer;
 		}
 
-		static inline InternalKmer ParseHashLine(const char* bufferPosition)
+		static inline InternalKmer ParseHashLine(const char* bufferPosition, size_t tabLineCount)
 		{
 			InternalKmer iKmer = 0;
 			uint32_t tabCount = 0;
@@ -78,7 +85,8 @@ namespace rufus
 			{
 				++endLinePosition;
 				if (*endLinePosition == '\t') { ++tabCount; }
-				if (tabCount == 3)
+				if ((tabLineCount == 2 && tabCount == 0) ||
+					(tabLineCount == 3 && tabCount == 3))
 				{
 					++endLinePosition;
 					kmer = endLinePosition;
@@ -97,9 +105,15 @@ namespace rufus
 		{
 			std::ifstream file(fname);
 			std::string line;
+
+			std::getline(file, line);
+			size_t tabLineCount = std::count(line.begin(), line.end(), '\t');
+			InternalKmer iKmer = HashParser::ParseHashLine(line.c_str(), tabLineCount);
+			kmerSet.emplace(iKmer);
+
 			while (std::getline(file, line))
 			{
-				InternalKmer iKmer = HashParser::ParseHashLine(line.c_str());
+				InternalKmer iKmer = HashParser::ParseHashLine(line.c_str(), tabLineCount);
 				kmerSet.emplace(iKmer);
 			}
 		}
