@@ -48,6 +48,7 @@ namespace rufus
 					// processAlignment(kmers, infoLine, seqLine, plusLine, qualLine);
 				}
 			}
+			tp.stop(); // joining and waiting for all threads to complete
 		}
 
 	private:
