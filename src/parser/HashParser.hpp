@@ -85,7 +85,7 @@ namespace rufus
 			{
 				++endLinePosition;
 				if (*endLinePosition == '\t') { ++tabCount; }
-				if ((tabLineCount == 2 && tabCount == 0) ||
+				if ((tabLineCount < 3 && tabCount == 0) ||
 					(tabLineCount == 3 && tabCount == 3))
 				{
 					++endLinePosition;
