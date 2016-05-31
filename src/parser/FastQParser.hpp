@@ -40,14 +40,14 @@ namespace rufus
 				uint32_t kmerIterations = seqLine.size() - KMER_SIZE;
 				if (AlignmentParser::ParseAlignment(seqLine.c_str(), kmerIterations, kmers));;
 				{
-					processAlignment(kmers, seqLine, qualLine);
+					processAlignment(kmers, infoLine, seqLine, plusLine, qualLine);
 				}
 			}
 		}
 
 	private:
 
-		void processAlignment(const std::vector< InternalKmer >& kmers, const std::string& sequence, const std::string& quality)
+		void processAlignment(const std::vector< InternalKmer >& kmers, const std::string& infoLine, const std::string& sequence, const std::string& plusLine, const std::string& quality)
 		{
 			std::vector< bool > keepKmerPositions(kmers.size(), false);
 			uint16_t lowQualityIndices[256];
@@ -96,7 +96,10 @@ namespace rufus
 
 			if (kmerThresholdMet)
 			{
+				std::cout << infoLine << std::endl;
 				std::cout << sequence << std::endl;
+				std::cout << plusLine << std::endl;
+				std::cout << quality << std::endl;
 			}
 		}
 
