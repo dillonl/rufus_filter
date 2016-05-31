@@ -20,7 +20,7 @@ namespace
 
 		std::stringstream ss;
 		ss.str(fastQString.c_str());
-		rufus::FastQParser fqparser(&ss, &std::cout, kmers, 10, 1, 20);
+		rufus::FastQParser fqparser(&ss, &std::cout, kmers, 10, 1, 20, 2);
 		fqparser.parse();
 	}
 

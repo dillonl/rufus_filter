@@ -18,6 +18,7 @@ namespace rufus
 		uint32_t getWindowSize();
 		uint32_t getWindowThreshold();
 		uint32_t getQualityThreshold();
+		uint32_t getThreadCount();
 		bool parseOptions(int argc, char** argv);
 	private:
 
@@ -28,6 +29,7 @@ namespace rufus
 		uint32_t m_window_size;
 		uint32_t m_window_threshold;
 		uint32_t m_quality_threshold;
+		uint32_t m_thread_count;
 	};
 }
 

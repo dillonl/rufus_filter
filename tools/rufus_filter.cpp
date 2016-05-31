@@ -45,7 +45,7 @@ int main(int argc, char** argv)
 	{
 		fastQStream = new std::ifstream(fastQFilePath.c_str());
 	}
-	rufus::FastQParser fqparser(fastQStream, &std::cout, kmerHashes, 10, 1, 20);
+	rufus::FastQParser fqparser(fastQStream, &std::cout, kmerHashes, commandlineParser.getWindowSize(), commandlineParser.getWindowThreshold(), commandlineParser.getQualityThreshold(), commandlineParser.getThreadCount());
 	fqparser.parse();
 
 	return 0;

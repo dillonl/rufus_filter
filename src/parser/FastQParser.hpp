@@ -2,19 +2,21 @@
 #define SRC_PARSER_FASTQPARSER_HPP
 
 #include "util/noncopyable.hpp"
+#include "util/thread_pool.hpp"
 
 namespace rufus
 {
 	class FastQParser : noncopyable
 	{
 	public:
-		FastQParser(std::istream* in, std::ostream* out, std::unordered_set< InternalKmer >& kmers, uint32_t windowSize, uint32_t windowThreshold, uint32_t qualityThreshold) :
+		FastQParser(std::istream* in, std::ostream* out, std::unordered_set< InternalKmer >& kmers, uint32_t windowSize, uint32_t windowThreshold, uint32_t qualityThreshold, uint32_t threadCount) :
 			m_in(in),
 			m_out(out),
 			m_kmers(kmers),
 			m_window_size(windowSize),
 			m_window_threshold(windowThreshold),
-			m_quality_threshold(qualityThreshold)
+			m_quality_threshold(qualityThreshold),
+			m_thread_count(threadCount)
 		{
 		}
 
@@ -24,6 +26,7 @@ namespace rufus
 
 		void parse()
 		{
+			ThreadPool tp(this->m_thread_count);
 			std::string infoLine;
 			std::string seqLine;
 			std::string plusLine;
@@ -40,14 +43,16 @@ namespace rufus
 				uint32_t kmerIterations = seqLine.size() - KMER_SIZE;
 				if (AlignmentParser::ParseAlignment(seqLine.c_str(), kmerIterations, kmers));;
 				{
-					processAlignment(kmers, infoLine, seqLine, plusLine, qualLine);
+					auto funct = std::bind(&FastQParser::processAlignment, this, kmers, infoLine, seqLine, plusLine, qualLine);
+					tp.enqueue(funct);
+					// processAlignment(kmers, infoLine, seqLine, plusLine, qualLine);
 				}
 			}
 		}
 
 	private:
 
-		void processAlignment(const std::vector< InternalKmer >& kmers, const std::string& infoLine, const std::string& sequence, const std::string& plusLine, const std::string& quality)
+		void processAlignment(const std::vector< InternalKmer > kmers, const std::string infoLine, const std::string sequence, const std::string plusLine, const std::string quality)
 		{
 			std::vector< bool > keepKmerPositions(kmers.size(), false);
 			uint16_t lowQualityIndices[256];
@@ -96,10 +101,12 @@ namespace rufus
 
 			if (kmerThresholdMet)
 			{
-				std::cout << infoLine << std::endl;
-				std::cout << sequence << std::endl;
-				std::cout << plusLine << std::endl;
-				std::cout << quality << std::endl;
+				this->m_out_lock.lock();
+				(*m_out) << infoLine << std::endl;
+				(*m_out) << sequence << std::endl;
+				(*m_out) << plusLine << std::endl;
+				(*m_out) << quality << std::endl;
+				this->m_out_lock.unlock();
 			}
 		}
 
@@ -122,6 +129,9 @@ namespace rufus
 		uint32_t m_window_size;
 		uint32_t m_window_threshold;
 		uint32_t m_quality_threshold;
+		uint32_t m_thread_count;
+
+		std::mutex m_out_lock;
 	};
 }
 

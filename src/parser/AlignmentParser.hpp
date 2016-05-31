@@ -16,49 +16,6 @@ namespace rufus
 	class AlignmentParser : private noncopyable
 	{
 	public:
-		static inline bool ParseAlignment2(const char* sequence, const char* quality, uint32_t qualityThreshold, size_t kmerIterations, std::vector< InternalKmer >& kmers)
-		{
-			bool validKmer = true;
-			uint16_t lowQualityIndices[256];
-			uint16_t lowQualityIndicesSize = 0;
-			for (auto i = 0; i < kmerIterations; ++i)
-			{
-				if (quality[i] < qualityThreshold)
-				{
-					lowQualityIndices[lowQualityIndicesSize] = i;
-					++lowQualityIndicesSize;
-				}
-			}
-			size_t currentKmerPosition = 0;
-			uint16_t currentLowQualityIndex = 0;
-			uint16_t nextLowQualityPosition = (lowQualityIndicesSize > 0) ? lowQualityIndices[currentLowQualityIndex++] : std::numeric_limits< uint16_t >::max();
-			std::cout << sequence << std::endl;
-			for (auto j = 0; j < kmerIterations; ++j)
-			{
-				// std::cout << nextLowQualityPosition << " " << j << std::endl;
-				// if (nextLowQualityPosition <= (j + KMER_SIZE) && j >= nextLowQualityPosition) // if there is a low quality base the current kmer the skip past the low quality base
-				if (false)
-				{
-					j = nextLowQualityPosition;
-					++currentLowQualityIndex;
-					nextLowQualityPosition = (currentLowQualityIndex < lowQualityIndicesSize) ? lowQualityIndices[currentLowQualityIndex] :  std::numeric_limits< uint16_t >::max();
-				}
-				else // create the kmer from the sequence
-				{
-					InternalKmer tmp;
-					kmers[currentKmerPosition] = 0;
-					// validKmer &= unroller(j, uint_< KMER_SIZE - 1 >(),  sequence, kmers[currentKmerPosition]);
-					validKmer &= unroller(j, uint_< KMER_SIZE - 1 >(),  sequence, tmp);
-					++currentKmerPosition;
-					// std::cout << std::bitset< 64 >(kmers[currentKmerPosition]) << std::endl;
-					std::cout << std::string(sequence + j, KMER_SIZE) << std::endl;
-					std::cout << std::bitset< 64 >(tmp) << std::endl << std::endl;
-				}
-			}
-			kmers.resize(currentKmerPosition);
-			std::cout << kmers.size() << " " << kmers.capacity() << std::endl;
-			return validKmer;
-		}
 
 		static inline bool ParseAlignment(const char* alignment, size_t kmerIterations, std::vector< InternalKmer >& kmers)
 		{

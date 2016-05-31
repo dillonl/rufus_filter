@@ -3,7 +3,8 @@
 namespace rufus
 {
 	CommandlineParser::CommandlineParser(int argc, char** argv) :
-		m_options("Rufus.Filter", "Filters through kmers and finds the good ones")
+		m_options("Rufus.Filter", "Filters through kmers and finds the good ones"),
+		m_thread_count(2)
 	{
 	}
 
@@ -18,9 +19,10 @@ namespace rufus
 		bool success = true;
 		this->m_options.add_options()
 			("h,hash", "Path to kmer hash file", cxxopts::value< std::string >(this->m_hash_path))
-			("s,window_size", "Size of kmer Window", cxxopts::value< uint32_t >(this->m_window_size))
-			("w,window_threshold", "Threshold of matching kmers within window size", cxxopts::value< uint32_t >(this->m_window_threshold))
+			("w,window_size", "Size of kmer Window", cxxopts::value< uint32_t >(this->m_window_size))
+			("c,window_threshold", "Threshold of matching kmers within window size", cxxopts::value< uint32_t >(this->m_window_threshold))
 			("q,quality_threshold", "Threshold of kmer base quality", cxxopts::value< uint32_t >(this->m_quality_threshold))
+			("t,thread_count", "Thread Count [optional -- default 2]", cxxopts::value< uint32_t >(this->m_thread_count))
 			("f,fastq_file", "Input FastQ File [optional -- default stdin]", cxxopts::value< std::string >(this->m_fastq_path))
 			("help", "Print Help")
 			;
@@ -30,16 +32,16 @@ namespace rufus
 		if (this->m_options.count("help")) { std::cout << this->m_options.help() << std::endl; }
 
 		if (!this->m_options.count("h") ||
-			!this->m_options.count("s") ||
 			!this->m_options.count("w") ||
+			!this->m_options.count("c") ||
 			!this->m_options.count("q"))
 		{
 			std::cout << "Usage: rufus_filter [option] <argument>" << std::endl;
 			success = false;
 		}
 		if (this->m_options.count("h") == 0) { std::cout << "\t[-h] Kmer hash file must be specified" << std::endl; }
-		if (this->m_options.count("s") == 0) { std::cout << "\t[-s] Window size must be specified" << std::endl; }
-		if (this->m_options.count("w") == 0) { std::cout << "\t[-w] Window threshold must be specified" << std::endl; }
+		if (this->m_options.count("w") == 0) { std::cout << "\t[-w] Window size must be specified" << std::endl; }
+		if (this->m_options.count("c") == 0) { std::cout << "\t[-c] Window threshold must be specified" << std::endl; }
 		if (this->m_options.count("q") == 0) { std::cout << "\t[-q] Quality threshold must be specified" << std::endl; }
 		return success;
 	}
@@ -67,6 +69,11 @@ namespace rufus
 	uint32_t CommandlineParser::getQualityThreshold()
 	{
 		return this->m_quality_threshold;
+	}
+
+	uint32_t CommandlineParser::getThreadCount()
+	{
+		return this->m_thread_count;
 	}
 
 }
