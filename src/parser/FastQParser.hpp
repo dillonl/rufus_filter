@@ -115,7 +115,7 @@ namespace rufus
 		{
 			for (auto i = 0; i < qualityLength; ++i)
 			{
-				if (quality[i] < this->m_quality_threshold)
+				if ((quality[i] - 33) < this->m_quality_threshold)
 				{
 					lowQualityIndices[lowQualityIndicesSize] = i;
 					++lowQualityIndicesSize;
