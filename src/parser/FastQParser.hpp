@@ -67,7 +67,7 @@ namespace rufus
 			uint32_t currentWindowCount = 0;
 			for (auto i = 0; i < kmerLength; ++i)
 			{
-				if ((i + KMER_SIZE) >= nextLowQualityPosition)
+				if ((i + (KMER_SIZE - 1)) >= nextLowQualityPosition)
 				{
 					// here we subtract out all the windowCounts within the current window, we do this because we are skipping forward
 					for (uint32_t j = i; j < (nextLowQualityPosition + 1); ++j)
@@ -81,9 +81,9 @@ namespace rufus
 				}
 				//decrement window count
 				auto kmer = kmers[i];
-				auto rKmer = rufus::AlignmentParser::ReverseComplement(kmer);
-				bool keep = (kmer < rKmer) ? (this->m_kmers.count(kmer) > 0) : (this->m_kmers.count(rKmer) > 0);
-				if (keep)
+				// auto rKmer = rufus::AlignmentParser::ReverseComplement(kmer);
+				// bool keep = (kmer < rKmer) ? (this->m_kmers.count(kmer) > 0) : (this->m_kmers.count(rKmer) > 0);
+				if (this->m_kmers.count(kmer))
 				{
 					keepKmerPositions[i] = true;
 					++currentWindowCount;
@@ -94,7 +94,7 @@ namespace rufus
 						break;
 					}
 				}
-				if (i > this->m_window_size && keepKmerPositions[i - (this->m_window_size - 1)])
+				if (i >= this->m_window_size && keepKmerPositions[i - this->m_window_size])
 				{
 					currentWindowCount = (currentWindowCount <= 1) ? 0 : currentWindowCount - 1;
 				}
@@ -120,6 +120,11 @@ namespace rufus
 					lowQualityIndices[lowQualityIndicesSize] = i;
 					++lowQualityIndicesSize;
 				}
+			}
+			if (lowQualityIndicesSize < qualityLength)
+			{
+				lowQualityIndices[lowQualityIndicesSize] = std::numeric_limits< uint16_t >::max();
+				++lowQualityIndicesSize;
 			}
 		}
 

@@ -47,7 +47,10 @@ namespace rufus
 			while (std::getline(hashStream, line))
 			{
 				InternalKmer iKmer = HashParser::ParseHashLine(line.c_str(), tabLineCount);
+				setReverseComplement(line);
+				InternalKmer rKmer = HashParser::ParseHashLine(line.c_str(), tabLineCount);
 				kmerSet.emplace(iKmer);
+				kmerSet.emplace(rKmer);
 			}
 
 			return kmerSet;
@@ -114,7 +117,10 @@ namespace rufus
 			while (std::getline(file, line))
 			{
 				InternalKmer iKmer = HashParser::ParseHashLine(line.c_str(), tabLineCount);
+				setReverseComplement(line);
+				InternalKmer rKmer = HashParser::ParseHashLine(line.c_str(), tabLineCount);
 				kmerSet.emplace(iKmer);
+				kmerSet.emplace(rKmer);
 			}
 		}
 
@@ -155,6 +161,13 @@ namespace rufus
 				}
 				std::cout << "reading: " << lines++ << std::endl;
 			}
+		}
+
+		static void setReverseComplement(std::string& line)
+		{
+			std::unordered_map< char, char > complement({ {'A', 'T'}, {'T', 'A'}, {'C', 'G'}, {'G', 'C'} });
+			std::reverse(line.begin(), line.end());
+			for (auto i = 0; i < line.size(); ++i) { line[i] = complement[line[i]]; }
 		}
 	};
 }
